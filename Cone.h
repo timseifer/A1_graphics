@@ -153,7 +153,7 @@ private:
 					normal_x = normal_r * cos(2*PI* j/seg_x );
 					normal_y = normal_r * sin(2*PI* j/seg_x );
 					z = -.5 + z_step*i;
-					z_normal = z+.05;
+					z_normal = z + .06;
 					// cout << "z is " << z << endl;
 					my_vert_vals.push_back(vector<float>{x, z, y, (float)1.0});
 					this->my_normals.push_back(vector<float>{x, z, y, (float)1.0});

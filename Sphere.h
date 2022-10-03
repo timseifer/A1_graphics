@@ -11,20 +11,19 @@ public:
 	~Sphere() {};
 	std::vector<std::vector<float>> my_points;
 	std::vector<std::vector<float>> my_normals;
+	std::vector<std::vector<float>> my_normals_vector;
 
 	OBJ_TYPE getType() {
 		return SHAPE_SPHERE;
 	}
 
-	void draw() {
+	void draw(int v) {
+		this->my_normals.clear();
+		this->my_normals_vector.clear();
 
 			int segment_x  = this->m_segmentsX;
 			int segment_y = this->m_segmentsY;
 
-			float x1 = 0;
-			float y1 = 1;
-			float z1 = 0;
-			float w1 = 0;
 
 
 			this->my_normals.clear();
@@ -36,7 +35,8 @@ public:
 			my_points = my_points_t;
 			int index = 0;
 
-			glBegin(GL_LINES);
+			glBegin(GL_TRIANGLES);
+			glEnable(GL_NORMALIZE);
 			index = 0;
 
 			for(int i = 0; i < segment_x; i++){
@@ -46,26 +46,59 @@ public:
 						int pnt_two_idx = i*segment_y+p+1;
 						int pnt_three_idx = i*segment_y+p+segment_y;
 						int pnt_four_idx = i*segment_y+p+1+segment_y;
+						std::vector<float> val_1_n = my_normals_vector[pnt_one_idx];
 						std::vector<float> val_1 = my_points[pnt_one_idx];
+						std::vector<float> val_2_n = my_normals_vector[pnt_two_idx];
 						std::vector<float> val_2 = my_points[pnt_two_idx];
+						std::vector<float> val_3_n = my_normals_vector[pnt_three_idx];
 						std::vector<float> val_3 = my_points[pnt_three_idx];
+						std::vector<float> val_4_n = my_normals_vector[pnt_four_idx];
 						std::vector<float> val_4 = my_points[pnt_four_idx];
-						// base triangle
-						// if(val_1[0] == val_3[0] && val_1[1] == val_3[1]){
-						// setNormal(val_1[0], val_1[1], val_1[2], val_4[0], val_4[1], val_4[2], val_3[0], val_3[1], val_3[2]);
-						// glVertex3f(val_1[0], val_1[1], val_1[2]);
-						// glVertex3f(val_4[0], val_4[1], val_4[2]);
-						// glVertex3f(val_3[0], val_3[1], val_3[2]);
-						// }else{
-						// setNormal(val_1[0], val_1[1], val_1[2], val_2[0], val_2[1], val_2[2], val_3[0], val_3[1], val_3[2]);
+
+						if(p == 0){
 						glVertex3f(val_1[0], val_1[1], val_1[2]);
 						glVertex3f(val_2[0], val_2[1], val_2[2]);
+						glVertex3f(val_3[0], val_3[1], val_3[2]);
+
+						// glVertex3f(val_1[0], -.5, val_1[2]);
+						// glVertex3f(0, -.5, 0);
+						// glVertex3f(val_3[0], -.5, val_3[2]);
+
 						// glVertex3f(val_3[0], val_3[1], val_3[2]);
-						// setNormal(val_3[0], val_3[1], val_3[2], val_2[0], val_2[1], val_2[2], val_4[0], val_4[1], val_4[2]);
-						// glVertex3f(val_3[0], val_3[1], val_3[2]);
-						// glVertex3f(val_2[0], val_2[1], val_2[2]);
 						// glVertex3f(val_4[0], val_4[1], val_4[2]);
-						// }
+						// glVertex3f(val_2[0], val_2[1], val_2[2]);
+						}
+
+
+						// base triangle
+						if(v){
+							normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
+							glVertex3f(val_1[0], val_1[1], val_1[2]);
+							normalizeNormal(val_3_n[0], val_3_n[1], val_3_n[2]);
+							glVertex3f(val_3[0], val_3[1], val_3[2]);
+							normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
+							glVertex3f(val_4[0], val_4[1], val_4[2]);			
+
+							normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
+							glVertex3f(val_1[0], val_1[1], val_1[2]);
+							normalizeNormal(val_2_n[0], val_2_n[1], val_2_n[2]);
+							glVertex3f(val_2[0], val_2[1], val_2[2]);
+							normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
+							glVertex3f(val_4[0], val_4[1], val_4[2]);
+						}else{
+
+						setNormal(val_4[0], val_4[1], val_4[2],val_3[0], val_3[1], val_3[2], val_1[0], val_1[1], val_1[2]);
+						glVertex3f(val_4[0], val_4[1], val_4[2]);
+						glVertex3f(val_3[0], val_3[1], val_3[2]);
+						glVertex3f(val_1[0], val_1[1], val_1[2]);
+						
+						setNormal(val_1[0], val_1[1], val_1[2], val_2[0], val_2[1], val_2[2], val_4[0], val_4[1], val_4[2]);
+						glVertex3f(val_1[0], val_1[1], val_1[2]);
+						glVertex3f(val_2[0], val_2[1], val_2[2]);
+						glVertex3f(val_4[0], val_4[1], val_4[2]);
+						
+						}
+						
 				}
 			}
             glEnd();
@@ -84,17 +117,20 @@ private:
 		float radial_rotation = 2*PI/seg_x;
 			phi = 1.0*PI/seg_y;
 			theta = 2.0*PI/seg_x;
-			r = .5;
+			r = .5f;
 			for(int j = 0; j < seg_x; j++){
 				for(int i = 0; i < seg_y; i++){
-					theta_v = theta * i;
-					phi_v = phi * j;
+					theta_v = theta * j;
+					phi_v = phi * i;
 					x = r * cos(theta_v) * sin(phi_v);
 					y = r * sin(theta_v) * sin(phi_v);
 					z = r * cos(phi_v);
 					// z_normal = z+.05;
 					// cout << "z is " << z << endl;
 					my_vert_vals.push_back(vector<float>{x, z, y, (float)1.0});
+					this->my_normals.push_back(vector<float>{x, z, y, (float)1.0});
+					this->my_normals.push_back(vector<float>{x+.1f, z+.1f, y+.1f, (float)1.0});
+					this->my_normals_vector.push_back(vector<float>{x+.1f, z+.1f, y+.1f, (float)1.0});
 					//this->my_normals.push_back(vector<float>{x, z, y, (float)1.0});
 					//this->my_normals.push_back(vector<float>{normal_x, z_normal, normal_y, (float)1.0});
 
@@ -103,38 +139,7 @@ private:
 		return my_vert_vals;
 	}
 
-		void setNormal(float x1, float y1, float z1, float x2, float y2, float z2,
-                    float x3, float y3, float z3) {
-
-    float v1x, v1y, v1z;
-    float v2x, v2y, v2z;
-    float cx, cy, cz;
-
-    // find vector between x2 and x1
-    v1x = x1 - x2;
-    v1y = y1 - y2;
-    v1z = z1 - z2;
-
-    // find vector between x3 and x2
-    v2x = x2 - x3;
-    v2y = y2 - y3;
-    v2z = z2 - z3;
-
-    // cross product v1xv2
-
-    cx = v1y * v2z - v1z * v2y;
-    cy = v1z * v2x - v1x * v2z;
-    cz = v1x * v2y - v1y * v2x;
-
-    // normalize
-
-    float length = sqrt(cx * cx + cy * cy + cz * cz);
-    cx           = cx / length;
-    cy           = cy / length;
-    cz           = cz / length;
-
-    glNormal3f(cx, cy, cz);
-}
+	
 };
 
 #endif

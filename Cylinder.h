@@ -20,8 +20,8 @@ public:
 			this->my_points.clear();
 			this->my_normals.clear();
 			this->my_normals_vector.clear();
-			int segment_x  = this->m_segmentsX;
-			int segment_y = this->m_segmentsY;
+			float segment_x  = this->m_segmentsX;
+			float segment_y = this->m_segmentsY;
 
 			float x1 = 0;
 			float y1 = 1;
@@ -125,7 +125,7 @@ public:
 
 private:
 
-	std::vector<std::vector<float>> up_and_down(int seg_x, int seg_y){
+	std::vector<std::vector<float>> up_and_down(float seg_x, float seg_y){
 		float x, y, z, r, z_step, normal_r;
 		vector<vector<float>> my_vert_vals;
 		normal_r = .6;

@@ -20,24 +20,18 @@ public:
 	void draw(int v) {
 		this->my_normals.clear();
 		this->my_normals_vector.clear();
-
+		this->my_points.clear();
 			int segment_x  = this->m_segmentsX;
 			int segment_y = this->m_segmentsY;
-
-
-
-			this->my_normals.clear();
 			// if(my_points.empty()){
 			vector<vector<float>> my_points_t = up_and_down(segment_x, segment_y);
 			for(int p = 0; p < segment_y; p++){
 				my_points_t.push_back(my_points_t[p]);
+				my_normals_vector.push_back(my_normals[p]);
 			}
 			my_points = my_points_t;
-			int index = 0;
-
 			glBegin(GL_TRIANGLES);
 			glEnable(GL_NORMALIZE);
-			index = 0;
 
 			for(int i = 0; i < segment_x; i++){
 				for(int p = 0; p < segment_y-1; p++){
@@ -56,9 +50,9 @@ public:
 						std::vector<float> val_4 = my_points[pnt_four_idx];
 
 						if(p == 0){
-						glVertex3f(val_1[0], val_1[1], val_1[2]);
-						glVertex3f(val_2[0], val_2[1], val_2[2]);
-						glVertex3f(val_3[0], val_3[1], val_3[2]);
+						// glVertex3f(val_1[0], val_1[1], val_1[2]);
+						// glVertex3f(val_2[0], val_2[1], val_2[2]);
+						// glVertex3f(val_3[0], val_3[1], val_3[2]);
 
 						// glVertex3f(val_1[0], -.5, val_1[2]);
 						// glVertex3f(0, -.5, 0);
@@ -79,12 +73,14 @@ public:
 							normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
 							glVertex3f(val_4[0], val_4[1], val_4[2]);			
 
-							normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
-							glVertex3f(val_1[0], val_1[1], val_1[2]);
-							normalizeNormal(val_2_n[0], val_2_n[1], val_2_n[2]);
-							glVertex3f(val_2[0], val_2[1], val_2[2]);
 							normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
 							glVertex3f(val_4[0], val_4[1], val_4[2]);
+							normalizeNormal(val_2_n[0], val_2_n[1], val_2_n[2]);
+							glVertex3f(val_2[0], val_2[1], val_2[2]);
+							normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
+							glVertex3f(val_1[0], val_1[1], val_1[2]);
+
+
 						}else{
 
 						setNormal(val_4[0], val_4[1], val_4[2],val_3[0], val_3[1], val_3[2], val_1[0], val_1[1], val_1[2]);

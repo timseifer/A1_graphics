@@ -119,7 +119,6 @@ void MyGLCanvas::draw() {
 
 void MyGLCanvas::drawScene() {
     glPushMatrix();
-
     if (normal) {
         glDisable(GL_LIGHTING);
         glColor3f(1.0, 0.0, 0.0);
@@ -132,7 +131,7 @@ void MyGLCanvas::drawScene() {
         glEnable(GL_POLYGON_OFFSET_FILL);
         glColor3f(1.0f, 1.0f, 0.0f);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        shape->draw();
+        shape->draw(smooth);
         glEnable(GL_LIGHTING);
     }
 
@@ -140,8 +139,7 @@ void MyGLCanvas::drawScene() {
         glEnable(GL_POLYGON_OFFSET_FILL);
         glColor3f(0.5, 0.5, 0.5);
         glPolygonMode(GL_FRONT, GL_FILL);
-        // printf("here"); 
-        shape->draw();
+        shape->draw(smooth);
     }
 
     glPopMatrix();

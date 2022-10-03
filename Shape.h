@@ -33,7 +33,7 @@ public:
     }
 
     virtual OBJ_TYPE getType() = 0;
-    virtual void     draw(){};
+    virtual void     draw(int v){};
     virtual void     drawNormal(){};
 
 protected:

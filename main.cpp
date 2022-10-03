@@ -52,9 +52,6 @@ public:
     static void idleCB(void *userdata) {
         MyAppWindow *win = (MyAppWindow *)userdata;
         win->canvas->redraw();
-        // win->rotXSlider->value(win->canvas->rotVec.x);
-        // win->rotYSlider->value(win->canvas->rotVec.y);
-        // win->rotZSlider->value(win->canvas->rotVec.z);
     }
 
 private:

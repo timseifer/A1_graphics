@@ -18,7 +18,7 @@ public:
 		return SHAPE_SPECIAL1;
 	}
 
-	void draw() {
+	void draw(int v) {
             int segment_x  = this->m_segmentsX;
 			int segment_y = this->m_segmentsY;
 
@@ -32,7 +32,8 @@ public:
                 // setNormal(sides[0][i][0], sides[0][i][1], sides[0][i][2]);
                 cout << "(" << sides[0][i][0] << "," << sides[0][i][1] << "," << sides[0][i][2] << ")" << '\n';
                 
-                glVertex3d(sides[0][i][0], sides[0][i][1], sides[0][i][2]);
+                // one vertex of a triangle
+                glVertex3f(sides[0][i][0], sides[0][i][1], sides[0][i][2]);
             }
 
 

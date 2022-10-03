@@ -17,7 +17,9 @@ public:
 
 
 	void draw(int v) {
+			this->my_points.clear();
 			this->my_normals.clear();
+			this->my_normals_vector.clear();
 			int segment_x  = this->m_segmentsX;
 			int segment_y = this->m_segmentsY;
 
@@ -43,6 +45,7 @@ public:
 						int pnt_two_idx = i*segment_y+p+1;
 						int pnt_three_idx = i*segment_y+p+segment_y;
 						int pnt_four_idx = i*segment_y+p+1+segment_y;
+
 						std::vector<float> val_1_n = my_normals_vector[pnt_one_idx];
 						std::vector<float> val_1 = my_points[pnt_one_idx];
 						std::vector<float> val_2_n = my_normals_vector[pnt_two_idx];
@@ -59,21 +62,24 @@ public:
 						glVertex3f(val_3[0], val_3[1], val_3[2]);
 						normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
 						glVertex3f(val_4[0], val_4[1], val_4[2]);			
-						normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
-						glVertex3f(val_4[0], val_4[1], val_4[2]);
-						normalizeNormal(val_2_n[0], val_2_n[1], val_2_n[2]);
-						glVertex3f(val_2[0], val_2[1], val_2[2]);
+
 						normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
 						glVertex3f(val_1[0], val_1[1], val_1[2]);
+						normalizeNormal(val_2_n[0], val_2_n[1], val_2_n[2]);
+						glVertex3f(val_2[0], val_2[1], val_2[2]);
+						normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
+						glVertex3f(val_4[0], val_4[1], val_4[2]);
+
 						}else{
-							setNormal(val_1[0], val_1[1], val_1[2], val_2[0], val_2[1], val_2[2], val_3[0], val_3[1], val_3[2]);
-							glVertex3f(val_1[0], val_1[1], val_1[2]);
+							setNormal(val_4[0], val_4[1], val_4[2], val_3[0], val_3[1], val_3[2], val_1[0], val_1[1], val_1[2]);
+							glVertex3f(val_4[0], val_4[1], val_4[2]);
 							glVertex3f(val_3[0], val_3[1], val_3[2]);
-							glVertex3f(val_4[0], val_4[1], val_4[2]);
-							setNormal(val_2[0], val_2[1], val_2[2], val_4[0], val_4[1], val_4[2], val_3[0], val_3[1], val_3[2]);
-							glVertex3f(val_4[0], val_4[1], val_4[2]);
-							glVertex3f(val_2[0], val_2[1], val_2[2]);
 							glVertex3f(val_1[0], val_1[1], val_1[2]);
+									
+							setNormal(val_1[0], val_1[1], val_1[2], val_2[0], val_2[1], val_2[2], val_4[0], val_4[1], val_4[2]);
+							glVertex3f(val_1[0], val_1[1], val_1[2]);
+							glVertex3f(val_2[0], val_2[1], val_2[2]);
+							glVertex3f(val_4[0], val_4[1], val_4[2]);	
 						}
 				}
 			}
@@ -126,8 +132,8 @@ private:
 		float normal_x, normal_y;
 			for(int j = 0; j < seg_x; j++){
 				z_step =1.0/(seg_y-1);
-				cout << "z step is " << z_step << endl;
-				cout << "segments y is " << seg_y << endl;
+				// cout << "z step is " << z_step << endl;
+				// cout << "segments y is " << seg_y << endl;
 				for(int i = 0; i < seg_y; i++){
 					r = .5;
 					x = r*cos(2*PI* j/seg_x );
@@ -135,7 +141,7 @@ private:
 					normal_x = normal_r*cos(2*PI* j/seg_x );
 					normal_y = normal_r*sin(2*PI* j/seg_x );
 					z = -.5 + z_step*i;
-					cout << "z is " << z << endl;
+					// cout << "z is " << z << endl;
 
 					// the z axis for us is how far up and down the point is (y in our case)
 					my_vert_vals.push_back(vector<float>{x, z, y, (float)1.0});
@@ -148,38 +154,6 @@ private:
 		return my_vert_vals;
 	}
 
-	void setNormal(float x1, float y1, float z1, float x2, float y2, float z2,
-                    float x3, float y3, float z3) {
-
-    float v1x, v1y, v1z;
-    float v2x, v2y, v2z;
-    float cx, cy, cz;
-
-    // find vector between x2 and x1
-    v1x = x1 - x2;
-    v1y = y1 - y2;
-    v1z = z1 - z2;
-
-    // find vector between x3 and x2
-    v2x = x2 - x3;
-    v2y = y2 - y3;
-    v2z = z2 - z3;
-
-    // cross product v1xv2
-
-    cx = v1y * v2z - v1z * v2y;
-    cy = v1z * v2x - v1x * v2z;
-    cz = v1x * v2y - v1y * v2x;
-
-    // normalize
-
-    float length = sqrt(cx * cx + cy * cy + cz * cz);
-    cx           = cx / length;
-    cy           = cy / length;
-    cz           = cz / length;
-
-    glNormal3f(cx, cy, cz);
-}
 		
 };
 

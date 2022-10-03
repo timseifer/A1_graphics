@@ -18,7 +18,7 @@ public:
 		return SHAPE_CONE;
 	}
 
-	void draw() {
+	void draw(int v) {
 
 			int segment_x  = this->m_segmentsX;
 			int segment_y = this->m_segmentsY;
@@ -28,8 +28,9 @@ public:
 			float z1 = 0;
 			float w1 = 0;
 
-
+			this->my_points.clear();
 			this->my_normals.clear();
+			this->my_normals_vector.clear();
 			// if(my_points.empty()){
 			vector<vector<float>> my_points_t = up_and_down(segment_x, segment_y);
 			for(int p = 0; p < segment_y; p++){
@@ -50,20 +51,45 @@ public:
 						int pnt_two_idx = i*segment_y+p+1;
 						int pnt_three_idx = i*segment_y+p+segment_y;
 						int pnt_four_idx = i*segment_y+p+1+segment_y;
+						std::vector<float> val_1_n = my_normals_vector[pnt_one_idx];
 						std::vector<float> val_1 = my_points[pnt_one_idx];
+						std::vector<float> val_2_n = my_normals_vector[pnt_two_idx];
 						std::vector<float> val_2 = my_points[pnt_two_idx];
+						std::vector<float> val_3_n = my_normals_vector[pnt_three_idx];
 						std::vector<float> val_3 = my_points[pnt_three_idx];
+						std::vector<float> val_4_n = my_normals_vector[pnt_four_idx];
 						std::vector<float> val_4 = my_points[pnt_four_idx];
 
-						setNormal(val_2[0], val_2[1], val_2[2], val_1[0], val_1[1], val_1[2],val_3[0], val_3[1], val_3[2]);
-						glVertex3f(val_1[0], val_1[1], val_1[2]);
-						glVertex3f(val_2[0], val_2[1], val_2[2]);
-						glVertex3f(val_3[0], val_3[1], val_3[2]);
 
-						setNormal(val_3[0], val_3[1], val_3[2], val_4[0], val_4[1], val_4[2], val_2[0], val_2[1], val_2[2]);
+						if(v){
+							normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
+							glVertex3f(val_1[0], val_1[1], val_1[2]);
+							normalizeNormal(val_3_n[0], val_3_n[1], val_3_n[2]);
+							glVertex3f(val_3[0], val_3[1], val_3[2]);
+							normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
+							glVertex3f(val_4[0], val_4[1], val_4[2]);			
+
+							normalizeNormal(val_1_n[0], val_1_n[1], val_1_n[2]);
+							glVertex3f(val_1[0], val_1[1], val_1[2]);
+							normalizeNormal(val_2_n[0], val_2_n[1], val_2_n[2]);
+							glVertex3f(val_2[0], val_2[1], val_2[2]);
+							normalizeNormal(val_4_n[0], val_4_n[1], val_4_n[2]);
+							glVertex3f(val_4[0], val_4[1], val_4[2]);
+						}else{
+
+						setNormal(val_4[0], val_4[1], val_4[2],val_3[0], val_3[1], val_3[2], val_1[0], val_1[1], val_1[2]);
 						glVertex3f(val_4[0], val_4[1], val_4[2]);
 						glVertex3f(val_3[0], val_3[1], val_3[2]);
+						glVertex3f(val_1[0], val_1[1], val_1[2]);
+						
+						
+
+						setNormal(val_1[0], val_1[1], val_1[2], val_2[0], val_2[1], val_2[2], val_4[0], val_4[1], val_4[2]);
+						glVertex3f(val_1[0], val_1[1], val_1[2]);
 						glVertex3f(val_2[0], val_2[1], val_2[2]);
+						glVertex3f(val_4[0], val_4[1], val_4[2]);
+						
+						}
 						
 				}
 			}
@@ -170,8 +196,103 @@ private:
 
     glNormal3f(cx, cy, cz);
 }
-
-	
 };
+
+
+// #ifndef CONE_H
+// #define CONE_H
+
+// #include <vector>
+// #include <map>
+// #include <set>
+// #include <cmath>
+// #include "Shape.h"
+
+// using namespace std;
+
+// class Cone : public Shape {
+// public:
+// 	Cone() {};
+// 	~Cone() {};
+
+// 	OBJ_TYPE getType() {
+// 		return SHAPE_CONE;
+// 	}
+
+// 	void draw(int v) {
+// 		float m_segmentsX_angle = 2 * PI / m_segmentsX;
+// 		float m_segmentsY_length = 1.0f / m_segmentsY;
+
+// 		normals_by_vertex.clear();
+// 		vector<vector<float>> bottom_points = {};
+
+// 		for (int x_index = 0; x_index < m_segmentsX; x_index++) {
+// 			bottom_points.push_back({ 0.0f, -0.5f, 0.0f, 1.0f });
+// 			bottom_points.push_back({ 0.5f * cos(m_segmentsX_angle * x_index), -0.5f, 0.5f * sin(m_segmentsX_angle * x_index), 1.0f });
+// 			bottom_points.push_back({ 0.5f * cos(m_segmentsX_angle * (x_index + 1)), -0.5f, 0.5f * sin(m_segmentsX_angle * (x_index + 1)), 1.0f });
+
+// 			normals_by_vertex[{ 0.0f, -0.5f, 0.0f, 1.0f }].insert({ 0.0f, -1.0f, 0.0f });
+// 			normals_by_vertex[{ 0.5f * cos(m_segmentsX_angle * x_index), -0.5f, 0.5f * sin(m_segmentsX_angle * x_index), 1.0f }].insert({ 0.0f, -1.0f, 0.0f });
+// 			normals_by_vertex[{ 0.5f * cos(m_segmentsX_angle * (x_index + 1)), -0.5f, 0.5f * sin(m_segmentsX_angle * (x_index + 1)), 1.0f }].insert({ 0.0f, -1.0f, 0.0f });
+// 		}
+// 		normals_by_vertex[{ 0.0f, -0.5f, 0.0f, 1.0f }].insert({ 0.0f, -1.0f, 0.0f });
+
+// 		map<vector<float>, vector<vector<float>>> side_points = {};
+
+// 		for (int x_index = 0; x_index < m_segmentsX; x_index++) {
+// 			vector<float> each_side_normal = getNormal(0.5f * cos(m_segmentsX_angle * x_index), -0.5f, 0.5f * sin(m_segmentsX_angle * x_index), 0.0f, 0.5f, 0.0f, 0.5f * cos(m_segmentsX_angle * (x_index + 1)), -0.5f, 0.5f * sin(m_segmentsX_angle * (x_index + 1)));
+// 			vector<vector<float>> each_side_points = {};
+
+// 			for (int y_index = 0; y_index < m_segmentsY; y_index++) {
+// 				each_side_points.push_back({ (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * x_index), -0.5f + m_segmentsY_length * y_index, (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * x_index), 1.0f });
+// 				each_side_points.push_back({ (float)(m_segmentsY - (y_index + 1)) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * x_index), -0.5f + m_segmentsY_length * (y_index + 1), (float)(m_segmentsY - (y_index + 1)) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * x_index), 1.0f });
+// 				each_side_points.push_back({ (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * (x_index + 1)), -0.5f + m_segmentsY_length * y_index, (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * (x_index + 1)), 1.0f });
+				
+
+// 				each_side_points.push_back({ (float)(m_segmentsY - (y_index + 1)) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * x_index), -0.5f + m_segmentsY_length * (y_index + 1), (float)(m_segmentsY - (y_index + 1)) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * x_index), 1.0f });
+// 				each_side_points.push_back({ (float)(m_segmentsY - (y_index + 1)) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * (x_index + 1)), -0.5f + m_segmentsY_length * (y_index + 1), (float)(m_segmentsY - (y_index + 1)) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * (x_index + 1)), 1.0f });
+// 				each_side_points.push_back({ (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * (x_index + 1)), -0.5f + m_segmentsY_length * y_index, (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * (x_index + 1)), 1.0f });
+				
+// 				// TODO: need to calc the correct side normals
+// 				normals_by_vertex[{  (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * cos(m_segmentsX_angle * x_index), -0.5f + m_segmentsY_length * y_index, (float)(m_segmentsY - y_index) / (float)m_segmentsY * 0.5f * sin(m_segmentsX_angle * x_index)}].insert(each_side_normal);
+// 			}
+// 			side_points[each_side_normal] = each_side_points;
+// 		}
+
+// 		glBegin(GL_TRIANGLES);
+// 		glNormal3f(0.0f, -1.0f, 0.0f);
+// 		for (int index = 0; index < bottom_points.size(); index++) {
+// 			glVertex3f(bottom_points[index][0], bottom_points[index][1], bottom_points[index][2]);
+// 		}
+
+// 		for (map<vector<float>, vector<vector<float>>>::iterator iter = side_points.begin(); iter != side_points.end(); iter++) {
+// 			glNormal3f(iter->first[0], iter->first[1], iter->first[2]);
+
+// 			for (int index = 0; index < iter->second.size(); index++) {
+// 				glVertex3f(iter->second[index][0], iter->second[index][1], iter->second[index][2]);
+// 			}
+// 		}
+// 		glEnd();
+// 	};
+
+// 	void drawNormal() {
+// 		float length_factor = 0.1f;
+
+// 		glBegin(GL_LINES);
+// 		glColor3f(1.0, 0.0, 0.0);
+// 		for (map<vector<float>, set<vector<float>>>::iterator iter = normals_by_vertex.begin(); iter != normals_by_vertex.end(); iter++) {
+// 			for (auto it = iter->second.cbegin(); it != iter->second.cend(); it++) {
+// 				glVertex3f(iter->first[0], iter->first[1], iter->first[2]);
+// 				glVertex3f(iter->first[0] + (*it)[0] * length_factor, iter->first[1] + (*it)[1] * length_factor, iter->first[2] + (*it)[2] * length_factor);
+// 			}
+// 		}
+// 		glEnd();
+// 	};
+
+// private:
+// 	map<vector<float>, set<vector<float>>> normals_by_vertex;
+// };
+
+// #endif
 
 #endif

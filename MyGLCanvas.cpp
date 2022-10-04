@@ -134,6 +134,7 @@ void MyGLCanvas::drawScene() {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         shape->draw(smooth);
         glEnable(GL_LIGHTING);
+        
     }
 
     if (fill) {
